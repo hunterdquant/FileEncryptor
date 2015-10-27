@@ -1,7 +1,7 @@
 /**
  * @author Hunter Quant <quanthd@clarkson.edu>
  *
- * Prompts user to encrypt or decrypt an input message.
+ * Provides encryption for a line of text.
  */
 
 

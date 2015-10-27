@@ -1,3 +1,9 @@
+/**
+ * @author Hunter Quant <quanthd@clarkson.edu>
+ *
+ * Serves as a client, which prompts the user for their desired form of encryption.
+ */
+
 import java.io.File;
 import java.util.Scanner;
 
@@ -11,6 +17,10 @@ public class Encrypt {
 	 *  - java Encrypt -e "<message>"
 	 * To Bypass the prompt to decrypt a message.
 	 *  - java Encrypt -d "<message>" <key>
+	 * To bypass the prompt to encrypt a file.
+	 *  - java Encrypt -fe "<input file>" "<output file>"
+	 * To Bypass the prompt to decrypt a file.
+	 *  - java Encrypt -fd "<input file>" "<output file>" <key>
 	 * 
 	 * @param args - Command line arguments.
 	 */
@@ -19,7 +29,7 @@ public class Encrypt {
 		Encryptor encryptor = null;
 		try {
 			if (args.length == 0) {
-				prompt(encryptor);
+				prompt();
 			// If the chose to bypass the prompt to encrypt.
 			} else if (args[0].equals("-e")) {
 				encryptor = new SimpleEncryptor();
@@ -35,14 +45,17 @@ public class Encrypt {
 				encryptor.setEncryptionKey(Byte.parseByte(args[2]));
 				encryptor.textDecrypt();
 				System.out.println("The decrypted message is: " + encryptor.getClearText());
+			// If they chose to bypass the prompt to encrypt a file.
 			} else if (args[0].equals("-fe")) {
 				File inputFile = new File(args[1]);
 				Scanner in = new Scanner(System.in);
+				// Continue to prompt until they enter a valid file.
 				while (!inputFile.exists()) {
-					System.out.println("The file you entered could not be found. Try again or type Q to quit: ");
+					System.out.println("The file you entered does not exist. Try again: ");
 					inputFile = new File(in.nextLine());
 				}
 				in.close();
+				// Check for proper argument numbers.
 				if (args.length  == 3) {
 					encryptor = new FileEncryptor(inputFile, args[2]);
 					encryptor.textEncrypt();
@@ -54,11 +67,12 @@ public class Encrypt {
 					System.out.println("Your file has been encrypted!");
 					System.out.println("Your encryption key is: " + encryptor.getEncryptionKey());
 				}
+			// If they chose to bypass the prompt to decrypt a file.
 			} else if (args[0].equals("-fd")) {
 				File inputFile = new File(args[1]);
 				Scanner in = new Scanner(System.in);
 				while (!inputFile.exists()) {
-					System.out.println("The file you entered could not be found. Try again or type Q to quit: ");
+					System.out.println("The file you entered does not exist. Try again: ");
 					inputFile = new File(in.nextLine());
 					
 				}
@@ -88,12 +102,11 @@ public class Encrypt {
 	}
 	
 	/**
-	 * Prompts the user for whether they want to encrypt or decrypt.
+	 * Prompts the user for whether they want to encrypt or decrypt a line of text of a file..
  	 *
-	 * @param encryptor - used to encrypt/decrypt messages.
 	 */
-	public static void prompt(Encryptor encryptor) {
-	
+	public static void prompt() {
+		Encryptor encryptor;
 		Scanner in = new Scanner(System.in);
 		System.out.print("Would you like to encrypt/decrypt a file or text? F/T: ");
 		switch (in.nextLine().toLowerCase()) {
@@ -123,6 +136,7 @@ public class Encrypt {
 						System.out.println("You entered invalid input.");
 					}
 				}
+				break;
 			}
 			case "f": {
 				System.out.print("Would you like to encrypt or decrypt? E/D: ");
@@ -161,6 +175,10 @@ public class Encrypt {
 						System.out.println("You entered invalid input.");
 					}
 				}
+				break;
+			}
+			default : {
+				System.out.println("You entered invalid input.");
 			}
 		}
 				
